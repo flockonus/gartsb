@@ -1,0 +1,15 @@
+{
+    "name": "gartsb"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "3.0"
+  },
+  "scripts__": { "start": "node app.js" },
+  "scripts": { "start": "node app.js >>~/gamewiser.log 2>&1" },
+  "engines": {
+  	"node": "0.6.18",
+  	"npm": "1.1.9"
+  }
+}
+

@@ -1,0 +1,5 @@
+{
+  "logger": {
+  	"format": ":status| :method :url |:response-time ms"
+  }
+}
