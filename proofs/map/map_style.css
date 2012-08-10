@@ -1,0 +1,78 @@
+ body{
+                padding: 0;
+                margin: 0;
+                
+            }
+            div{
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -ms-box-sizing: border-box;
+                box-sizing: border-box;
+                padding: 0;
+                margin: 0;
+            }
+            #container{
+                
+            }
+            #map-wrap{
+                position: left;
+                width: 70%;
+                background: gray;
+                height: 100%;
+                padding: 3%;
+                z-index: 1;
+            }
+            #map{
+                color: red;
+                border: silver 1px dotted;
+                width: 700px;
+                height: 400px;
+                /*important to keep hero in place*/
+                position: relative;
+                /*text-align: center;*/
+            }
+            .tile{
+                float: left;
+                background-color: green;
+                width: 138px;
+                height: 98px;
+                margin: 0 1px 1px 0;
+                position: relative;
+            }
+            
+            .tile .active{
+                background-color: rgba(0,200,50,0.7);
+            }
+            .hero{
+                position: absolute;
+                top:-5%;
+                left:0;
+                height: 100px;
+                width: 100px;
+                background: rgba(100,100,100,0.8);
+                border-radius: 10px;
+            }
+            
+            #panel-wrap{
+                position: fixed;
+                right: 0;
+                top:0;
+                width: 30%;
+                background: silver;
+                border-left: blue 5px inset;
+                overflow: hidden;
+                height: 100%;
+                z-index: 10;
+            }
+            
+            /* UTILS */
+            .clear{
+                clear:both;
+            }
+            .full{
+                position: absolute;
+                top: 0;
+                left:0;
+                bottom:0;
+                right: 0;
+            }
