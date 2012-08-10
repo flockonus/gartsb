@@ -60,12 +60,26 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 var io = require('socket.io').listen(server);
 io.set('log level', 2);
 
-// TODO check me on production: http://handbook.nodejitsu.com/#Redis
+// check me on production: http://handbook.nodejitsu.com/#Redis
+// redis-cli -h $REDIS_URL -p $REDIS_PORT -a $REDIS_PASS
+// redis-cli -h scat.redistogo.com -p 9495 -a ?
 // TODO could be shared with connext/express as well
 var RedisStore = require('socket.io/lib/stores/redis')
-  , pub    = redis.createClient()
-  , sub    = redis.createClient()
-  , R = redis.createClient();
+  , pub, sub, R;
+
+if ('production' == app.get('env')) {
+	pub    = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
+	pub.auth(process.env.REDIS_PASS )
+  sub    = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
+  sub.auth(process.env.REDIS_PASS )
+  R      = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
+  R.auth(  process.env.REDIS_PASS )
+  console.log('pass', process.env.REDIS_PASS)
+} else {
+	pub    = redis.createClient()
+  sub    = redis.createClient()
+  R      = redis.createClient()
+}
 
 io.set('store', new RedisStore({
   redisPub : pub
@@ -136,7 +150,7 @@ io.sockets.on('connection', function(socket) {
 			// TODO emit game end
 			R.get("socket-room-"+socket.id, function(err,roomId){
 				io.sockets['in']("room-"+roomId).emit('game end',{result:"quitter"});
-				C('disconnect',io.sockets['in']("room-"+roomId), roomId)
+				C('disconnect', roomId)
 			})
 		})
 	})
@@ -150,6 +164,6 @@ setInterval(function(){
 	R.llen("wait-queue",function(err,count){
 		C("wait-queue:", count)
 	})
-}, 4000)
+}, 5000)
 
 

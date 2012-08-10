@@ -1,9 +1,9 @@
 {
   "name": "exp3-swig-redis-boiler",
-  "version": "0.0.1",
+  "version": "0.0.1-6",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node ./app.js"
   },
   "dependencies": {
     "express": "3.0",
@@ -11,7 +11,11 @@
     "socket.io": "0.9.9",
     "redis": "0.7.2"
   },
-  "engine" :{
-  	"node": "0.8"
+  "engine": {
+    "node": "0.8"
+  },
+  "subdomain": "fabianops-proof-boiler",
+  "engines": {
+    "node": "0.8.x"
   }
 }
