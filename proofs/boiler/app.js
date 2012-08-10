@@ -74,6 +74,9 @@ io.set('store', new RedisStore({
 }));
 
 
+// FIXME only for redirect
+// init redis
+R.set('room-count', 0)
 
 // receive an uid
 // shifts somebody from match-queue
@@ -91,21 +94,55 @@ io.sockets.on('connection', function(socket) {
 		if( !partnerId ){
 			R.rpush("wait-queue", socket.id)
 		} else {
-			// TODO found! start game for these guys!
+			// found partner! start game for these guys!
 			C("made a match!", socket.id, partnerId)
-			io.sockets.socket()
+			
+			R.incr('room-count',function(err, roomId){
+				function rColor(){ return Math.floor( Math.random()*100 )+100 }
+				var color = "rgb("+rColor()+","+rColor()+","+rColor()+")"
+				io.sockets.socket(partnerId).emit('game start', {
+					room: roomId,
+					color: color,
+				})
+				socket.emit('game start', {
+					room: roomId,
+					color: color,
+				})
+				
+				io.sockets.socket(partnerId).join("room-"+roomId)
+				socket.join("room-"+roomId)
+				
+				// save both players id to the roomId
+				R.set("socket-room-"+partnerId, roomId)
+				R.set("socket-room-"+socket.id, roomId)
+				// set expire to 4h
+				R.expire("socket-room-"+partnerId, 60*60*4)
+				R.expire("socket-room-"+socket.id, 60*60*4)
+				// TODO create room
+				
+				
+				//R.set("socket-"+)
+			})
 		}
 	})
 	
   // Emit a message to send it to the client.
   socket.emit('hello', { msg: 'Hello. I know socket.io.' });
   
+	socket.on('disconnect', function(a) {
+		// disbandle room
+		R.lrem("wait-queue", 1, socket.id, function(err,count){
+			C("1 client disconnect!",socket.id, count )
+			// TODO emit game end
+			R.get("socket-room-"+socket.id, function(err,roomId){
+				io.sockets['in']("room-"+roomId).emit('game end',{result:"quitter"});
+				C('disconnect',io.sockets['in']("room-"+roomId), roomId)
+			})
+		})
+	})
 });
 
 // TODO LREM 1 on disconnect
-	io.sockets.on('disconnection', function(socket) {
-		C("1 client disconnect!")
-	})
 
 //C(io.sockets)
 
@@ -113,6 +150,6 @@ setInterval(function(){
 	R.llen("wait-queue",function(err,count){
 		C("wait-queue:", count)
 	})
-}, 2000)
+}, 4000)
 
 
