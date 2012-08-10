@@ -7,12 +7,37 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>{{title}}</title>
         <meta name="description" content="" />
-        <meta name="author" content="Fabiano PS" />
-        <meta name="viewport" content="width=device-width; initial-scale=1.0" />
-        <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+        <meta name="author" content="flockonus" />
+        <!-- annoying error! meta name="viewport" content="width=device-width; initial-scale=1.0" / -->
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        
+        
         <link rel="stylesheet" href="/stylesheets/style.css" />
+        <script type="text/javascript" charset="utf-8" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            
+        window.onload = function () {
+            // Connect to socket.io
+            var socket = io.connect();
+    
+            // React to a received message
+            socket.on('hello', function (data) {
+    
+              // Modify the DOM to show the message
+              document.getElementById("status-label").innerHTML = data.msg;
+    
+              // Send a message back to the server
+              socket.emit('pong', {
+                msg: "The web browser also knows socket.io."
+              });
+            });
+            
+            socket.on('gamestart', function(data){
+                alert(data)
+            })
+          };
+        </script>
     </head>
     <body>
         <div>
