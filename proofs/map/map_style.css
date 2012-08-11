@@ -114,6 +114,14 @@ div{
                 background-color: red;
             }
 
+                .attack_button :hover{
+                    background-color: orange;
+                }
+
+                .attack_button :active{
+                    background-color: orange;
+                }
+
             #gauge_bar{
                 width: 90%;
                 height: 60px;
