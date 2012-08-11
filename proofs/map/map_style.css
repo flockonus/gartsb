@@ -1,69 +1,133 @@
  body{
-                padding: 0;
-                margin: 0;
-                
+    padding: 0;
+    margin: 0;
+}
+
+div{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+    #container{
+            
+    }
+
+    #map-wrap{
+        position: left;
+        width: 70%;
+        background: gray;
+        height: 100%;
+        bottom: 100%;
+        z-index: 1;
+    }
+
+        #map{
+            color: red;
+            border: silver 1px dotted;
+            width: 700px;
+            height: 500px;
+            margin: auto;
+            /*important to keep hero in place*/
+            position: relative;
+            /*text-align: center;*/
+        }
+
+            #map_background{
+                width: 694px;
+                height: 100px;
+                background: blue;
             }
-            div{
-                -webkit-box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                -ms-box-sizing: border-box;
-                box-sizing: border-box;
-                padding: 0;
-                margin: 0;
-            }
-            #container{
-                
-            }
-            #map-wrap{
-                position: left;
-                width: 70%;
-                background: gray;
-                height: 100%;
-                padding: 3%;
-                z-index: 1;
-            }
-            #map{
-                color: red;
-                border: silver 1px dotted;
-                width: 700px;
-                height: 400px;
-                /*important to keep hero in place*/
-                position: relative;
-                /*text-align: center;*/
-            }
+
             .tile{
                 float: left;
                 background-color: green;
                 width: 138px;
                 height: 98px;
-                margin: 0 1px 1px 0;
+                margin: 0 1px 1px 0; 
                 position: relative;
             }
             
             .tile .active{
                 background-color: rgba(0,200,50,0.7);
             }
+
             .hero{
                 position: absolute;
-                top:-5%;
-                left:0;
+                top:50px;
+                left:10px;
                 height: 100px;
                 width: 100px;
                 background: rgba(100,100,100,0.8);
                 border-radius: 10px;
             }
             
-            #panel-wrap{
-                position: fixed;
-                right: 0;
-                top:0;
-                width: 30%;
-                background: silver;
-                border-left: blue 5px inset;
-                overflow: hidden;
-                height: 100%;
-                z-index: 10;
+        #panel_wrap{
+            position: fixed;
+            right: 0;
+            top:0;
+            width: 30%;
+            min-width: 350px;
+            background: silver;
+            border-left: blue 5px inset;
+            overflow: hidden;
+            height: 100%;
+            z-index: 10;
+        }
+
+            .slect_hero {
+                position: absolute;
+                width: 30px;
+                height: 200px;
+                top: 48px;
+                margin-left: 10%;
+                border: thin solid black;
             }
+
+            .positioning {
+                position: absolute;
+                margin-left: 81%;
+            }
+
+            #hero_avatar{
+                width: 200px;
+                height: 200px;
+                margin: auto;
+                border: thin solid;
+            }
+
+            #panel_wrap h2{
+                text-align: center;
+                margin-bottom: 0px;
+
+            }
+
+            .attack_button{
+                width: 90%;
+                min-width: 300px;
+                height: 30px;
+                margin: auto;
+                margin-bottom: 5px;
+                background-color: red;
+            }
+
+            #gauge_bar{
+                width: 90%;
+                height: 60px;
+                margin: auto;
+                border: thin solid black;
+            }
+
+                .gauge_bar_unit{
+                    float: left;
+                    width: 16%;
+                    height: 50%;
+                    margin: 0px 0px 0px 1px;
+                    background-color: green;
+                }
             
             /* UTILS */
             .clear{
