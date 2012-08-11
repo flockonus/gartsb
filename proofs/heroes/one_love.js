@@ -44,26 +44,28 @@ Map1.prototype.inspect = function(){
 
 
 function HP(max){
-    this.max = max
-    this.current = max
+	this.max = max
+	this.current = max
 }
 
 HP.prototype.rate = function(){
-    return this.current/this.max
+  return this.current/this.max
 }
 
 function Animation(classe, aName, aDuration, aIC, aTF){
-    this.classe = classe || ""
-    this['animation-name'] = aName || 'jumpy'
-    this['animation-duration'] = aDuration || "1s"
-    this['animation-iteration-count'] = aIC || 'infinite'
-    this['animation-timing-function'] = aTF || 'ease-in-out'
+	this.classe = classe || ""
+	this['animation-name'] = aName || 'jumpy'
+	this['animation-duration'] = aDuration || "1s"
+	this['animation-iteration-count'] = aIC || 'infinite'
+	this['animation-timing-function'] = aTF || 'ease-in-out'
 }
 
 function CastRange(shape, width, height){
-    this.shape = shape
-    this.w = width || 1 // 1 would be self
-    this.h = height || 1
+	// the same, right?
+	if( shape == 'circle' ) shape = 'square'
+	this.shape = shape
+	this.w = width || 1 // 1 would be self
+	this.h = height || 1
 }
 
 
@@ -72,19 +74,19 @@ function CastRange(shape, width, height){
  * should only come as array of 'self', 'ally', 'enemy', 'empty'
  */
 function Target(list){
-    if( typeof list != 'object' || list.length < 1 ) throw( new Error('no param') )
-    this.all = {}
-    for (var i=0; i < list.length; i++) {
-      this.all[ list[i] ] = true
-    };
+	if( typeof list != 'object' || list.length < 1 ) throw( new Error('no param') )
+	this.all = {}
+	for (var i=0; i < list.length; i++) {
+	  this.all[ list[i] ] = true
+	};
 }
 
-Target.prototype.alow = function(type){
+Target.prototype.include = function(type){
     return !!this.all[type]
 }
 
-function Selection(sRange,target){
-    this.range = sRange
+function Selection(cRange,target){
+    this.range = cRange
     this.target = target
 }
 
@@ -134,25 +136,55 @@ function Action(id, title, cost, description, selection, output){//animation
 }
 
 /**
- * id: action id, should be registered within the mananger
  * fromPos: denote who casted, always
  * toPos: where it was targeted
  */
-Action.prototype.valid = function( id, fromPos, toPos ){
+Action.prototype.isValid = function( map, player, fromPos, toPos ){
     // find the move
     // check the cast-range
 }
 
 /**
- * id: action id, should be registered within the mananger
- * fromPos: denote who casted, always
+ * fromPos: denote who casted, {x,y}
  * 
  * return: an array of blocks that are valid to be clicked
  */
-Action.prototype.validBlocks = function( id, fromPos ){
-    var action = ActionManager.get(id)
-    action.
-    
+Action.prototype.validBlocks = function( map, team_id, fromPos ){
+	var blocks = []
+	var posX, posY, what
+	var rangeW = this.selection.range.w
+	
+	switch(this.selection.range.shape){
+	case 'square':
+		for (var x=(-1*rangeW); x <= rangeW; x++) {
+			for (var y=(-1*rangeW); y <= rangeW; y++) {
+				posX = fromPos.x+x
+				posY = fromPos.y+y
+				what = map.get(posX,posY)
+				console.log('eval', posX, posY)
+				if( what == MAP.OFB ){
+					// next!
+				}else if( what == MAP.EMPTY && this.selection.target.include('empty') ){
+					console.log(' >push')
+					blocks.push({
+						x:posX,
+						y:posY,
+					})
+				}
+				else if( typeof what == 'object' && // a hero
+								this.selection.target.include('enemy') &&
+								what.team_id != team_id ){
+					blocks.push({
+						x:posX,
+						y:posY,
+					})
+				}
+			//forend
+			};
+		};
+		break;
+	}
+	return blocks
 }
 
 
@@ -174,8 +206,8 @@ ActionManager.register(new Action(
     2,
     "move to an adjacent tile",
     new Selection(
-        CastRange('circle', 1),
-        Target(['empty'])
+        new CastRange('square', 1),
+        new Target(['empty'])
     ),
     new Output([
         ['move', 'endPos']
@@ -183,17 +215,17 @@ ActionManager.register(new Action(
 ))
 
 ActionManager.register(new Action(
-    'atk-sushi',
-    "Atack",
-    4,
-    "Slice with sharp knife!",
-    new Selection(
-        CastRange('circle', 1), // the block itself
-        Target(['enemy'])
-    ),
-    new Output([
-        ['damage', 'circle', 0, 'endPos', new Damage(5,2,0.15)]
-    ])
+	'atk-sushi',
+	"Atack",
+	3,
+	"Slice with sharp knife!",
+	new Selection(
+		new CastRange('square', 1), // the block itself
+		new Target(['enemy'])
+	),
+	new Output([
+		['damage', 'circle', 0, 'toPos', new Damage(5,2,0.15)]
+	])
 ))
 
 /*
@@ -206,7 +238,7 @@ ActionManager.register(new Action(
         Target(['enemy'])
     ),
     new Output([
-        ['damage', 'circle', 1, 'curPos', new Damage(5,2,0.15)]
+        ['damage', 'circle', 1, 'toPos', new Damage(5,2,0.15)]
     ])
 ))*/
 
@@ -222,26 +254,26 @@ function Hero(){
  * thrown if anything is badly configured
  */
 Hero.prototype.validate = function(){
-    // validate this.id on Regex
-    // validate this.animations against AnimationManager (if $CLIENT)
-    // validate this.actions    against ActionManager
+	// validate this.id on Regex
+	// validate this.animations against AnimationManager (if $CLIENT)
+	// validate this.actions    against ActionManager
 }
 
 Hero.prototype.inspect = function(){
-    console.log(this.type, 'hp: '+this.hp.current+'/'+this.hp.max)
+	console.log(this.type, 'hp: '+this.hp.current+'/'+this.hp.max)
 }
 
 function SushiHero(team_id){
-    this.team_id = team_id
-    // simple, short, continous string
-    this.type = "sushi"
-    this.name = "Mad Sushi Man"
-    this.description = "After his wife and son got killed by sharks he sees fish in the face of anyone! So technically he is not trying to kill you, just doing his job."
-    this.hp = new HP(100)
-    //later this.def = 0.3
-    this.animations = ['sushi-alive', 'sushi-dead']
-    this.actions = ['move', 'atk-sushi']//, 'madchop']
-    this.validate()
+	this.team_id = team_id
+	// simple, short, continous string
+	this.type = "sushi"
+	this.name = "Mad Sushi Man"
+	this.description = "After his wife and son got killed by sharks he sees fish in the face of anyone! So technically he is not trying to kill you, just doing his job."
+	this.hp = new HP(100)
+	//later this.def = 0.3
+	this.animations = ['sushi-alive', 'sushi-dead']
+	this.actions = ['move', 'atk-sushi']//, 'madchop']
+	this.validate()
 }
 
 // can be improved
@@ -253,53 +285,55 @@ SushiHero.prototype.inspect = Hero.prototype.inspect
  * side: 0 / 1  => left / right
  */
 function Team(id, playerId, side){
-    this.id = id
-    this.playerId = playerId
-    this.side = side
-    // at this point have both sides come with same heroes
-    this.heroes = [
-        new SushiHero(this.id),
-        new SushiHero(this.id),
-    ]
+	this.id = id
+	this.playerId = playerId
+	this.side = side
+	// at this point have both sides come with same heroes
+	this.heroes = [
+		new SushiHero(this.id),
+		new SushiHero(this.id),
+	]
 }
 
 Team.prototype.inspect = function(){
-    console.group('Team '+this.id+' ('+this.playerId+')')
-    for (var i=0; i < this.heroes.length; i++) {
-      this.heroes[i].inspect()
-    };
-    console.groupEnd()
+	console.group('Team '+this.id+' ('+this.playerId+')')
+	for (var i=0; i < this.heroes.length; i++) {
+		this.heroes[i].inspect()
+	};
+	console.groupEnd()
 }
 
 /**
+ * 2 players, turn based, game mananger
  * 
  */
 var GameManager = {
-    // to start all we need are both players connected
-    status: 'waiting', // waiting, running, ended
-    teams: {},
-    map: null,
-    start: function(p1Id,p2Id){
-        this.status = 'running'
-        this.map = new Map1()
-        this.teams['left'] = new Team('left', p1Id, 0 )
-        this.teams['right'] = new Team('right', p2Id, 0 )
-        this._setHeroesToMap()
-    },
-    _setHeroesToMap: function(){
-        if( !this.map ) throw new Error('no map!')
-        var map = this.map
-        map.set( 0,      1, this.teams['left' ].heroes[0])
-        map.set( 0,      2, this.teams['left' ].heroes[1])
-        map.set( map.w-1,1, this.teams['right'].heroes[0])
-        map.set( map.w-1,2, this.teams['right'].heroes[1])
-    },
-    inspect: function(){
-        console.log('gameman', this.status)
-        if( this.status == 'running' ){
-            this.map.inspect()
-            this.teams['left' ].inspect()
-            this.teams['right' ].inspect()
-        }
-    }
+	// to start all we need are both players connected
+	status: 'waiting', // waiting, running, ended
+	teams: {},
+	map: null,
+	turn: 0,
+	start: function(p1Id,p2Id){
+		this.status = 'running'
+		this.map = new Map1()
+		this.teams['left'] = new Team('left', p1Id, 0 )
+		this.teams['right'] = new Team('right', p2Id, 0 )
+		this._setHeroesToMap()
+	},
+	_setHeroesToMap: function(){
+		if( !this.map ) throw new Error('no map!')
+		var map = this.map
+		map.set( 0,      1, this.teams['left' ].heroes[0])
+		map.set( 0,      2, this.teams['left' ].heroes[1])
+		map.set( map.w-1,1, this.teams['right'].heroes[0])
+		map.set( map.w-1,2, this.teams['right'].heroes[1])
+	},
+	inspect: function(){
+		console.log('gameman', this.status)
+		if( this.status == 'running' ){
+			this.map.inspect()
+			this.teams['left' ].inspect()
+			this.teams['right' ].inspect()
+		}
+	}
 }

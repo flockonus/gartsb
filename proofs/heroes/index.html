@@ -38,6 +38,17 @@
         GameManager.start('a', 'b')
         GameManager.inspect()
     }
+    
+    function moveActionTest(){
+        GameManager.start('a', 'b')
+        a = ActionManager.get('move');
+        console.log( a.validBlocks(GameManager.map, GameManager.teams.left.id, {x:0,y:1}) )
+    }
+    function atkSushiActionTest(){
+        GameManager.start('a', 'b')
+        a = ActionManager.get('atk-sushi');
+        console.log( a.validBlocks(GameManager.map, GameManager.teams.left.id, {x:0,y:1}) )
+    }
 </script>
     </head>
     <body>
@@ -45,6 +56,8 @@
             <button type="button" onclick="dmgTest()">dmgTest</button>
             <button type="button" onclick="map1Test()">map1Test</button>
             <button type="button" onclick="gameManTest()">gameManTest</button>
+            <button type="button" onclick="moveActionTest()">moveActionTest</button>
+            <button type="button" onclick="atkSushiActionTest()">atkSushiActionTest</button>
         </div>
     </body>
 </html>
