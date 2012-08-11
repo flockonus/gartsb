@@ -105,8 +105,9 @@ Target.prototype.alow = function(type){
     return !!this.all[type]
 }
 
-function Selection(){
-    
+function Selection(sRange,target){
+    this.range = sRange
+    this.target = target
 }
 
 function Damage(base, interval, critRatio){
@@ -133,7 +134,30 @@ Damage.prototype.inspect = function(){
     console.log("Damage",this.base, this.interval, this.critRatio, o.raw, o.critical)
 }
 
-function Action(){
+function Action(id, title, description, selection, output ){
+    this.id = id
+    this.title = title
+    this.description = description
+    this.selection = selection
+    this.output = output
+}
+
+/**
+ * id: action id, should be registered within the mananger
+ * fromPos: denote who casted, always
+ * toPos: where it was targeted
+ */
+Action.prototype.valid = function( id, fromPos, toPos ){
+    
+}
+
+/**
+ * id: action id, should be registered within the mananger
+ * fromPos: denote who casted, always
+ * 
+ * return: an array of blocks that are valid to be clicked
+ */
+Action.prototype.validBlocks = function( id, fromPos ){
     
 }
 
@@ -143,14 +167,16 @@ function SushiHero(){
     this.description = "After his wife and son got killed by sharks he sees fish in the face of anyone! So technically he is not trying to kill you, just doing his job."
     this.hp = new HP(base.max_hp)
     this.def = 0.3
-    if( typeof window != undefined && window.$CLIENT ){
-        this.baseAnimation = {
-            alive: new Animation('sushi-alive'),
-            dead:  new Animation('sushi-dead'),
-        }
-    } else
-        this.baseAnimation = {}
+    this.baseAnimation = {
+        alive: new Animation('sushi-alive'),
+        dead:  new Animation('sushi-dead'),
+    }
+    //if( typeof window != undefined && window.$CLIENT ){
+    //} else
+    //    this.baseAnimation = {}
     
+    // TODO TODO TODO
+    this.actions = ['move', 'atk1', 'madchop']
 }
 
 //})()
