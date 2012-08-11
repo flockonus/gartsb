@@ -1,44 +1,44 @@
 MAP = {
-    OFB: null,
-    EMPTY: 0,
-    //HERO: 1,
+	OFB: null,
+	EMPTY: 0,
+	//HERO: 1,
 }
 
 function Map1(){
-    this.w = 5 //x
-    this.h = 4 //y
-    this.tiles = {}
-    this.init()
+	this.w = 5 //x
+	this.h = 4 //y
+	this.tiles = {}
+	this.init()
 }
 
 
 Map1.prototype.init = function(){
-    for (var x=0; x < this.w; x++) {
-        for (var y=0; y < this.h; y++) {
-            this.tiles[x+'_'+y] = MAP.EMPTY
-        };
-    };
+	for (var x=0; x < this.w; x++) {
+		for (var y=0; y < this.h; y++) {
+			this.tiles[x+'_'+y] = MAP.EMPTY
+		};
+	};
 }
 
 Map1.prototype.get = function(x,y){
-    if( x >= this.w ) return MAP.OFB
-    if( y >= this.h ) return MAP.OFB
-    return this.tiles[x+'_'+y]
+	if( x >= this.w ) return MAP.OFB
+	if( y >= this.h ) return MAP.OFB
+	return this.tiles[x+'_'+y]
 }
 
 Map1.prototype.set = function(x,y,obj){
-    if( x >= this.w ) return false
-    if( y >= this.h ) return false
-    this.tiles[x+'_'+y] = obj
-    return true
+	if( x >= this.w ) return false
+	if( y >= this.h ) return false
+	this.tiles[x+'_'+y] = obj
+	return true
 }
 
 Map1.prototype.inspect = function(){
-    console.group("Map1")
-    for(var key in this.tiles){
-        console.log(key,this.tiles[key])
-    }
-    console.groupEnd()
+	console.group("Map1")
+	for(var key in this.tiles){
+		console.log(key,this.tiles[key])
+	}
+	console.groupEnd()
 }
 
 
@@ -82,57 +82,57 @@ function Target(list){
 }
 
 Target.prototype.include = function(type){
-    return !!this.all[type]
+	return !!this.all[type]
 }
 
 function Selection(cRange,target){
-    this.range = cRange
-    this.target = target
+	this.range = cRange
+	this.target = target
 }
 
 function Damage(base, interval, critRatio){
-    this.base = base
-    this.interval = interval
-    this.critRatio = critRatio || 0
+	this.base = base
+	this.interval = interval
+	this.critRatio = critRatio || 0
 }
 
 Damage.prototype.roll = function(){
-    var output = this.base+((1+Math.random())*this.interval)
-    var critTrigged = false
-    if( Math.random() < this.critRatio ){
-        output += this.base*0.6
-        critTrigged = true
-    }
-    return {
-        raw: Math.floor(output),
-        critical: critTrigged,
-    }
+	var output = this.base+((1+Math.random())*this.interval)
+	var critTrigged = false
+	if( Math.random() < this.critRatio ){
+		output += this.base*0.6
+		critTrigged = true
+	}
+	return {
+		raw: Math.floor(output),
+		critical: critTrigged,
+	}
 }
 
 Damage.prototype.inspect = function(){
-    var o = this.roll()
-    console.log("Damage",this.base, this.interval, this.critRatio, o.raw, o.critical)
+	var o = this.roll()
+	console.log("Damage",this.base, this.interval, this.critRatio, o.raw, o.critical)
 }
 
 function AreaOfEffect(shape, width, height){
-    
+	
 }
 /**
  * description_list: takes either 1 array of string, or 1 array of arrays
  */
 function Output( description_list ){
-    if( typeof description_list != 'object' || description_list.length < 1 ) throw( new Error('no param') )
-    if( typeof description_list[0] == 'string') description_list = [description_list]
-    this.outcome = description_list
+	if( typeof description_list != 'object' || description_list.length < 1 ) throw( new Error('no param') )
+	if( typeof description_list[0] == 'string') description_list = [description_list]
+	this.outcome = description_list
 }
 
 function Action(id, title, cost, description, selection, output){//animation
-    this.id = id
-    this.title = title
-    this.cost = cost
-    this.description = description
-    this.selection = selection
-    this.output = output
+	this.id = id
+	this.title = title
+	this.cost = cost
+	this.description = description
+	this.selection = selection
+	this.output = output
 }
 
 /**
@@ -140,8 +140,8 @@ function Action(id, title, cost, description, selection, output){//animation
  * toPos: where it was targeted
  */
 Action.prototype.isValid = function( map, player, fromPos, toPos ){
-    // find the move
-    // check the cast-range
+	// find the move
+	// check the cast-range
 }
 
 /**
@@ -190,28 +190,28 @@ Action.prototype.validBlocks = function( map, team_id, fromPos ){
 
 
 ActionManager = {
-    list:{},
-    register: function(action){
-        this.list[action.id] = action
-    },
-    get: function(id){
-        if( !!this.list[id] ) return this.list[id]
-        throw new Error("no action by id: "+id)
-    }
+	list:{},
+	register: function(action){
+		this.list[action.id] = action
+	},
+	get: function(id){
+		if( !!this.list[id] ) return this.list[id]
+		throw new Error("no action by id: "+id)
+	}
 }
 
 ActionManager.register(new Action(
-    'move',
-    "Move",
-    2,
-    "move to an adjacent tile",
-    new Selection(
-        new CastRange('square', 1),
-        new Target(['empty'])
-    ),
-    new Output([
-        ['move', 'endPos']
-    ])
+	'move',
+	"Move",
+	2,
+	"move to an adjacent tile",
+	new Selection(
+		new CastRange('square', 1),
+		new Target(['empty'])
+	),
+	new Output([
+		['move', 'endPos']
+	])
 ))
 
 ActionManager.register(new Action(
@@ -230,16 +230,16 @@ ActionManager.register(new Action(
 
 /*
 ActionManager.register(new Action(
-    'atk-pik',
-    "ThunderJolt",
-    "Damages every foe around",
-    new Selection(
-        CastRange('circle', 1), // the block itself
-        Target(['enemy'])
-    ),
-    new Output([
-        ['damage', 'circle', 1, 'toPos', new Damage(5,2,0.15)]
-    ])
+	'atk-pik',
+	"ThunderJolt",
+	"Damages every foe around",
+	new Selection(
+		CastRange('circle', 1), // the block itself
+		Target(['enemy'])
+	),
+	new Output([
+		['damage', 'circle', 1, 'toPos', new Damage(5,2,0.15)]
+	])
 ))*/
 
 
@@ -247,7 +247,7 @@ ActionManager.register(new Action(
  * mere prototype for 'inheritance'
  */
 function Hero(){
-    
+	
 }
 
 /**
@@ -256,7 +256,7 @@ function Hero(){
 Hero.prototype.validate = function(){
 	// validate this.id on Regex
 	// validate this.animations against AnimationManager (if $CLIENT)
-	// validate this.actions    against ActionManager
+	// validate this.actions	against ActionManager
 }
 
 Hero.prototype.inspect = function(){
@@ -323,8 +323,8 @@ var GameManager = {
 	_setHeroesToMap: function(){
 		if( !this.map ) throw new Error('no map!')
 		var map = this.map
-		map.set( 0,      1, this.teams['left' ].heroes[0])
-		map.set( 0,      2, this.teams['left' ].heroes[1])
+		map.set( 0,	  1, this.teams['left' ].heroes[0])
+		map.set( 0,	  2, this.teams['left' ].heroes[1])
 		map.set( map.w-1,1, this.teams['right'].heroes[0])
 		map.set( map.w-1,2, this.teams['right'].heroes[1])
 	},
