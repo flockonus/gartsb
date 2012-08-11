@@ -1,15 +1,18 @@
 {
-    "name": "gartsb"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "express": "3.0"
+  "name": "gartsb",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./app.js"
   },
-  "scripts__": { "start": "node app.js" },
-  "scripts": { "start": "node app.js >>~/gamewiser.log 2>&1" },
+  "dependencies": {
+    "express": "3.0",
+    "swig": "0.12.0",
+    "socket.io": "0.9.9",
+    "redis": "0.7.2"
+  },
+  "subdomain": "fabianops-gartsb",
   "engines": {
-  	"node": "0.6.18",
-  	"npm": "1.1.9"
+    "node": "0.8.x"
   }
 }
-
