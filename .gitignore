@@ -1,4 +1,5 @@
 *~
+.dropbox
 .project
 .redcar
 node_modules/*
