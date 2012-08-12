@@ -1,0 +1,15 @@
+*~
+.dropbox
+.project
+.redcar
+proofs/*
+node_modules/*
+node_modules/express
+node_modules/mongoose
+node_modules/stache
+node_modules/.bin
+*.password
+public/cover/*.png
+public/cover/*.jpg
+public/cover/*.jpge
+public/covers/*

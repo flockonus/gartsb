@@ -39,6 +39,14 @@ Map1.prototype.set = function(x,y,obj){
 	return true
 }
 
+Map1.prototype.each = function(cb){
+	for (var x=0; x < this.w; x++) {
+		for (var y=0; y < this.h; y++) {
+			cb(x,y,this.tiles[x+'_'+y])
+		};
+	};
+}
+
 Map1.prototype.inspect = function(){
 	console.group("Map1")
 	for(var key in this.tiles){
@@ -47,6 +55,22 @@ Map1.prototype.inspect = function(){
 	console.groupEnd()
 }
 G.Map1 = Map1
+
+// not happy about this function, since it would be better to index each hero to the map via some hero.id
+Map1.prototype.positionOfHero = function(hero){
+	for(var k in this.tiles){
+		if( this.tiles[k] == hero ){
+			var xy = k.split('_')
+			return{
+				x:xy[0],
+				y:xy[1],
+				hero: hero,
+			}
+		}
+	}
+}
+G.Map1 = Map1
+
 
 
 function HP(max){
@@ -285,6 +309,9 @@ G.SushiHero = SushiHero
 SushiHero.prototype.validate = Hero.prototype.validate
 SushiHero.prototype.inspect = Hero.prototype.inspect
 
+
+MAX_AP = 6
+G.MAX_AP = MAX_AP
 /**
  * player_id = socket.id
  * side: 0 / 1  => left / right
@@ -293,10 +320,11 @@ function Team(id, playerId, side){
 	this.id = id
 	this.playerId = playerId
 	this.side = side
+	this.ap = side
 	// at this point have both sides come with same heroes
 	this.heroes = [
 		new SushiHero(this.id),
-		new SushiHero(this.id),
+		//new SushiHero(this.id),
 	]
 }
 
@@ -309,39 +337,65 @@ Team.prototype.inspect = function(){
 }
 G.Team = Team
 
+TURN_BASE = 20
+G.TURN_BASE = TURN_BASE
 /**
  * 2 players, turn based, game mananger
  * 
  */
-function GameManager(p1Id,p2Id){
+function GameManager(roomId, p1Id, p2Id){
 	// to start all we need are both players connected
 	this.status = 'initialized' // initialized, running, ended
 	this.teams = {}
 	this.map = null
 	this.turn = 0
+	this.whoseTurn = 'left'
+	//this.turnTimeLeft = TURN_BASE
 	this.map = new Map1()
 	this.teams['left'] = new Team('left', p1Id, 0 )
 	this.teams['right'] = new Team('right', p2Id, 0 )
 	this._setHeroesToMap()
+	this.roomId = roomId
 }
 
 GameManager.prototype._setHeroesToMap = function(){
 	if( !this.map ) throw new Error('no map!')
 	var map = this.map
-	map.set( 0,	  1, this.teams['left' ].heroes[0])
-	map.set( 0,	  2, this.teams['left' ].heroes[1])
-	map.set( map.w-1,1, this.teams['right'].heroes[0])
-	map.set( map.w-1,2, this.teams['right'].heroes[1])
+	map.set( 0,	  1,    this.teams['left' ].heroes[0])
+	//map.set( 0,	  2,    this.teams['left' ].heroes[1])
+	map.set( map.w-1,2, this.teams['right'].heroes[0])
+	//map.set( map.w-1,1, this.teams['right'].heroes[1])
 }
+
+GameManager.prototype.start = function(turnCb, playActionCb){
+	this.status = 'running'
+	turnCb(this.whoseTurn, this.turn)
+	//this.turnTimeLeft = TURN_BASE
+	this.turnCb = turnCb
+	this.playActionCb = playActionCb
+}
+
+GameManager.prototype.nextTurn = function(){
+	this.whoseTurn = (this.whoseTurn == 'left' ? 'right' : 'left')
+	this.turn += 1
+	this.turnCb(this.whoseTurn, this.turn)
+}
+
 
 GameManager.prototype.inspect = function(){
 	console.log('gameman', this.status)
-	if( this.status == 'running' ){
+	if( this.map ){
 		this.map.inspect()
 		this.teams['left' ].inspect()
 		this.teams['right' ].inspect()
 	}
 }
+
+// invoke this callback every n secconds
+//GameManager.prototype.registerCallbacks = function(turnCb, actionCb){
+//	this.turnCb = cb
+//}
+
 G.GameManager = GameManager
 
 if (typeof module != 'undefined' ) {

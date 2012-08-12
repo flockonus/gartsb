@@ -58,15 +58,12 @@ var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
-var io = require('socket.io').listen(server);
-io.set('log level', 2);
 
 // check me on production: http://handbook.nodejitsu.com/#Redis
 // redis-cli -h $REDIS_URL -p $REDIS_PORT -a $REDIS_PASS
 // redis-cli -h scat.redistogo.com -p 9495 -a ?
 // TODO could be shared with connext/express as well
-var RedisStore = require('socket.io/lib/stores/redis')
-  , pub, sub, R;
+var pub, sub, R;
 
 if ('production' == app.get('env')) {
 	pub    = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
@@ -82,89 +79,22 @@ if ('production' == app.get('env')) {
   R      = redis.createClient()
 }
 
-io.set('store', new RedisStore({
-  redisPub : pub
-, redisSub : sub
-, redisClient : R
-}));
+var io = require('./lib/sockets.js')(server, pub, sub, R, C )
+//var gm = require('./lib/gm.js')
 
 
 // FIXME only for redirect
 // init redis
-R.set('room-count', 0)
 
-// receive an uid
-// shifts somebody from match-queue
-//   if somebody, assign a room for both
-//   or enqueue self uid
-// when any of those quit, the game is over
-io.sockets.on('connection', function(socket) {
-	C( socket.id, "just connected!" )
-	
-	// looks for a contender
-	R.lpop("wait-queue", function(err,partnerId){
-		//C("lpop", partnerId)
-		
-		// well.. nobody shows up, enqueue myself
-		if( !partnerId ){
-			R.rpush("wait-queue", socket.id)
-		} else {
-			// found partner! start game for these guys!
-			C("made a match!", socket.id, partnerId)
-			
-			R.incr('room-count',function(err, roomId){
-				function rColor(){ return Math.floor( Math.random()*100 )+100 }
-				var color = "rgb("+rColor()+","+rColor()+","+rColor()+")"
-				io.sockets.socket(partnerId).emit('game start', {
-					room: roomId,
-					color: color,
-				})
-				socket.emit('game start', {
-					room: roomId,
-					color: color,
-				})
-				
-				io.sockets.socket(partnerId).join("room-"+roomId)
-				socket.join("room-"+roomId)
-				
-				// save both players id to the roomId
-				R.set("socket-room-"+partnerId, roomId)
-				R.set("socket-room-"+socket.id, roomId)
-				// set expire to 4h
-				R.expire("socket-room-"+partnerId, 60*60*4)
-				R.expire("socket-room-"+socket.id, 60*60*4)
-				// TODO create room
-				
-				
-				//R.set("socket-"+)
-			})
-		}
-	})
-	
-  // Emit a message to send it to the client.
-  socket.emit('hello', { msg: 'Hello. I know socket.io.' });
-  
-	socket.on('disconnect', function(a) {
-		// disbandle room
-		R.lrem("wait-queue", 1, socket.id, function(err,count){
-			C("1 client disconnect!",socket.id, count )
-			// TODO emit game end
-			R.get("socket-room-"+socket.id, function(err,roomId){
-				io.sockets['in']("room-"+roomId).emit('game end',{result:"quitter"});
-				C('disconnect', roomId)
-			})
-		})
-	})
-});
 
 // TODO LREM 1 on disconnect
 
 //C(io.sockets)
 
 setInterval(function(){
-	R.llen("wait-queue",function(err,count){
-		C("wait-queue:", count)
-	})
+	//R.llen("wait-queue",function(err,count){
+		//C("wait-queue:", count)
+	//})
 }, 5000)
 
 

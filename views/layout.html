@@ -11,18 +11,36 @@
         <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
+        <link rel="stylesheet" href="/stylesheets/heroes.css" media="screen"/>
         <link rel="stylesheet" href="/stylesheets/map_style.css" media="screen"/>
-
-        <!-- script type="text/javascript" charset="utf-8" src="/javascripts/jquery.min.1.7.2.js"></script -->
-        <script type="text/javascript" charset="utf-8" src="/socket.io/socket.io.js"></script>
-        <script type="text/javascript" charset="utf-8" src="/javascripts/net.js"></script>
         <script type="text/javascript" charset="utf-8">
           
         </script>
     </head>
     <body>
-{% block content %}{% endblock %}
+        {% block content %}{% endblock %}
+        <div id="templates" style="display: none;">
+            <div id="game-panel-template"></div>
+            <div id="waiting-panel-template">
+                <h1>STATUS</h1>
+                <h2 id="partner-status">Waiting for partner..</h2>
+                <hr/>
+                <h1>SERVER</h1>
+                <h2 id="server-status">?</h2>
+                <hr/>
+            </div>
+            <div id="other-turn-template">
+                <h1>Look!</h1>
+                <h2 id="last-move">...</h2>
+                <hr/>
+            </div>
+        </div>
+        <script type="text/javascript" charset="utf-8" src="/javascripts/jquery.min.1.7.2.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/one_love.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/javascripts/player.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/javascripts/ui-control.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/javascripts/net.js"></script>
     </body>
 </html>
 
