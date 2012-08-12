@@ -4,11 +4,11 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
   , http = require('http')
   , path = require('path')
   , swig = require('./config/consolidate-swig').swig
   , redis = require('redis')
+  , manager = require('./shared/one_love.js')
   , C 
 
 
@@ -18,14 +18,14 @@ var app = express();
 if ('development' == app.get('env')) {
 	C = console.log
 	app.set('config', JSON.parse( require('fs').readFileSync('./config/development.json', 'utf8') ) )
-	require('swig').init({ cache: false, allowErrors: true, filters: {} })
+	require('swig').init({ cache: false, allowErrors: true, filters: {}, root: __dirname + '/views' })
 	console.log('configuring DEV')
 }
 
 if ('production' == app.get('env')) {
 	C = function(){}
   app.set('config', JSON.parse( require('fs').readFileSync('./config/production.json', 'utf8') ) )
-  require('swig').init({ cache: true, allowErrors: false, filters: {} })
+  require('swig').init({ cache: true, allowErrors: false, filters: {}, root: __dirname + '/views' })
 	console.log('configuring PROD')
 }
 
@@ -45,13 +45,14 @@ app.configure(function(){
   app.use(express.session());
   app.use(app.router);
   app.use(express['static'](path.join(__dirname, 'public')));
+  app.use(express['static'](path.join(__dirname, 'shared')));
 });
 
 app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
+require('./routes')(app)
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

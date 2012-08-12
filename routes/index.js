@@ -1,8 +1,8 @@
-
-/*
- * GET home page.
- */
-
-exports.index = function(req, res){
-  res.render('index', { title: "Let's Connect!" });
-};
+module.exports = function(app){
+	/*
+	 * GET home page.
+	 */
+	app.get('/', function(req, res){
+	  res.render('index', { title: "Let's Connect!" });
+	});
+}

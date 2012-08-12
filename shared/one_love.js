@@ -1,8 +1,14 @@
+(function(){
+var G = {}
+if(!console.group)    console.group = console.log
+if(!console.groupEnd) console.groupEnd = console.log
+
 MAP = {
 	OFB: null,
 	EMPTY: 0,
 	//HERO: 1,
 }
+G.MAP = MAP
 
 function Map1(){
 	this.w = 5 //x
@@ -40,7 +46,7 @@ Map1.prototype.inspect = function(){
 	}
 	console.groupEnd()
 }
-
+G.Map1 = Map1
 
 
 function HP(max){
@@ -51,6 +57,7 @@ function HP(max){
 HP.prototype.rate = function(){
   return this.current/this.max
 }
+G.HP = HP
 
 function Animation(classe, aName, aDuration, aIC, aTF){
 	this.classe = classe || ""
@@ -59,6 +66,7 @@ function Animation(classe, aName, aDuration, aIC, aTF){
 	this['animation-iteration-count'] = aIC || 'infinite'
 	this['animation-timing-function'] = aTF || 'ease-in-out'
 }
+G.Animation = Animation
 
 function CastRange(shape, width, height){
 	// the same, right?
@@ -67,7 +75,7 @@ function CastRange(shape, width, height){
 	this.w = width || 1 // 1 would be self
 	this.h = height || 1
 }
-
+G.CastRange = CastRange
 
 
 /**
@@ -84,11 +92,13 @@ function Target(list){
 Target.prototype.include = function(type){
 	return !!this.all[type]
 }
+G.Target = Target
 
 function Selection(cRange,target){
 	this.range = cRange
 	this.target = target
 }
+G.Selection = Selection
 
 function Damage(base, interval, critRatio){
 	this.base = base
@@ -113,10 +123,9 @@ Damage.prototype.inspect = function(){
 	var o = this.roll()
 	console.log("Damage",this.base, this.interval, this.critRatio, o.raw, o.critical)
 }
+G.Damage = Damage
 
-function AreaOfEffect(shape, width, height){
-	
-}
+
 /**
  * description_list: takes either 1 array of string, or 1 array of arrays
  */
@@ -125,6 +134,7 @@ function Output( description_list ){
 	if( typeof description_list[0] == 'string') description_list = [description_list]
 	this.outcome = description_list
 }
+G.Output = Output
 
 function Action(id, title, cost, description, selection, output){//animation
 	this.id = id
@@ -135,14 +145,6 @@ function Action(id, title, cost, description, selection, output){//animation
 	this.output = output
 }
 
-/**
- * fromPos: denote who casted, always
- * toPos: where it was targeted
- */
-Action.prototype.isValid = function( map, player, fromPos, toPos ){
-	// find the move
-	// check the cast-range
-}
 
 /**
  * fromPos: denote who casted, {x,y}
@@ -186,6 +188,7 @@ Action.prototype.validBlocks = function( map, team_id, fromPos ){
 	}
 	return blocks
 }
+G.Action = Action
 
 
 
@@ -199,6 +202,7 @@ ActionManager = {
 		throw new Error("no action by id: "+id)
 	}
 }
+G.ActionManager = ActionManager
 
 ActionManager.register(new Action(
 	'move',
@@ -275,6 +279,7 @@ function SushiHero(team_id){
 	this.actions = ['move', 'atk-sushi']//, 'madchop']
 	this.validate()
 }
+G.SushiHero = SushiHero
 
 // can be improved
 SushiHero.prototype.validate = Hero.prototype.validate
@@ -302,6 +307,7 @@ Team.prototype.inspect = function(){
 	};
 	console.groupEnd()
 }
+G.Team = Team
 
 /**
  * 2 players, turn based, game mananger
@@ -313,7 +319,6 @@ function GameManager(p1Id,p2Id){
 	this.teams = {}
 	this.map = null
 	this.turn = 0
-	this.status = 'running'
 	this.map = new Map1()
 	this.teams['left'] = new Team('left', p1Id, 0 )
 	this.teams['right'] = new Team('right', p2Id, 0 )
@@ -337,4 +342,14 @@ GameManager.prototype.inspect = function(){
 		this.teams['right' ].inspect()
 	}
 }
+G.GameManager = GameManager
 
+if (typeof module != 'undefined' ) {
+	module.exports = G
+};
+
+if (typeof window != 'undefined' ) {
+	window.G = G
+};
+
+})()

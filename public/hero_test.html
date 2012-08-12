@@ -2,20 +2,14 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
-        Remove this if you use the .htaccess -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>HEROES</title>
         <meta name="description" content="It is a simple map base" />
-        <!-- again, annoying meta name="viewport" content="width=device-width; initial-scale=1.0" /-->
-        <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-        <link rel="stylesheet" href="../map/map_style.css" />
         <link rel="stylesheet" href="./one_love.js" />
 
-        <script type="text/javascript" charset="utf-8" src="../map/jquery.min.1.7.2.js"></script>
         <script type="text/javascript" charset="utf-8">
         var $CLIENT = true
         </script>
@@ -27,27 +21,27 @@
     }
     
     function dmgTest(){
-        var d = new Damage(5,2,0.15)
+        var d = new G.Damage(5,2,0.15)
         d.inspect();d.inspect();d.inspect();d.inspect();
     }
     function map1Test(){
-        var m = new Map1()
+        var m = new G.Map1()
         m.inspect()
     }
     function gameManTest(){
-        var m = new GameManager('a', 'b')
+        var m = new G.GameManager('a', 'b')
         m.inspect()
         console.log(m)
     }
     
     function moveActionTest(){
-        var m = new GameManager('a', 'b')
-        a = ActionManager.get('move');
+        var m = new G.GameManager('a', 'b')
+        a = G.ActionManager.get('move');
         console.log( a.validBlocks(m.map, m.teams.left.id, {x:0,y:1}) )
     }
     function atkSushiActionTest(){
-        var m = new GameManager('a', 'b')
-        a = ActionManager.get('atk-sushi');
+        var m = new G.GameManager('a', 'b')
+        a = G.ActionManager.get('atk-sushi');
         console.log( a.validBlocks(m.map, m.teams.left.id, {x:0,y:1}) )
     }
 </script>
