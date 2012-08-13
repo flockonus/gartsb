@@ -1,13 +1,22 @@
 UI = {
 	fillTiles: function(){
 		var jmap = $('#map')
-		var tileFill = $('#map .tile:first').children().clone()//.get(0).outerHTML
-		$('#map .tile:first').children().remove()
-		$('#map .tile').append( tileFill )
+		var jtiles = $('#map .tile')
+		var tileFill = jtiles.filter(':first').children(':first').removeClass('active').clone()//.get(0).outerHTML
+		jtiles.filter(':first').children().remove()
+		jtiles.append( tileFill )
 		$('#map .hero').remove()
 	},
 	setGame: function(g){
+		var jtiles = $('#map .tile')
 		this.game = g
+		var tileLength = g.map.w * g.map.h
+		var x,y
+		jtiles.each(function(i,e){
+			y = i%(g.map.w)
+			x = Math.floor(i/(g.map.h+1))
+			e.id = x+"_"+y
+		})
 	},
 	storeGuiTemplate: function(){
 		// store #panel_wrap into #game-panel-template
@@ -74,27 +83,66 @@ UI = {
 			$('#panel_wrap').html(ctx.otherTurn)
 		}, this.beginDelay+5)
 	},
-	selectHero: function(obj){
-		$('#hero_'+obj.x+"_"+obj.y).append("*")
+	selectHero: function(hero){
+		$('#panel_wrap .attack_button').removeClass('active')
+		
+		$('#hero_'+hero.x+"_"+hero.y).append("*")
 		
 		$('#hero_avatar').html(
-			obj.hero.name+" "+obj.hero.hp.current+"/"+obj.hero.hp.max+
+			hero.name+" "+hero.hp.current+"/"+hero.hp.max+
 			"<br/><br/><i>"+
-			obj.hero.description+
+			hero.description+
 			'</i>')
 		
 		$('#panel_wrap .attack_button').each(function(i,e){
-			var actionId = obj.hero.actions[i]
+			var actionId = hero.actions[i]
 			if( actionId ){
 				var action = G.ActionManager.get( actionId )
-				var elems = $(this).children()
+				var jbtn = $(this).data('actionId', actionId)
+				var elems = jbtn.children()
 				elems.filter(':first').text(action.title)
 				elems.filter(':last').text(action.cost)
 			} else {
 				$(this).remove()
 			}
 		})
-	}
+	},
+	bindActionButtons: function(){
+		var ctx = this
+		function actionButtonClick(ev){
+			$('#panel_wrap .attack_button').removeClass('active')
+			var jact = $(this).addClass('active')
+			Player.selectAction( jact )
+		}
+		$('#panel_wrap .attack_button').live('click',actionButtonClick)
+	},
+	bindTilesFill: function(){
+		function isSkillActiveIn(ev){
+			//console.log(this.parentNode.id)
+			$(this).addClass('active')
+		}
+		function isSkillActiveOut(ev){
+			//console.log(this.parentNode.id)
+			$(this).removeClass('active')
+		}
+		$('#map .tile div').hover(isSkillActiveIn, isSkillActiveOut)
+		
+		
+		function attemptMove(){
+			var jelem = $(this)
+			if( jelem.hasClass('allowed') ){
+				var x = this.parentNode.id.split('_')[0]
+				var y = this.parentNode.id.split('_')[1]
+				Player.doActionAt( x, y )
+			} else {
+				jelem.removeClass('active').addClass('deny')
+				setTimeout(function(){
+					jelem.removeClass('deny')
+				},350)
+			}
+		}
+		$('#map .tile div').click(attemptMove)
+	},
 }
 
 
@@ -103,6 +151,8 @@ $(function(){
 	UI.fillTiles()
 	UI.storeGuiTemplate()
 	UI.showWaitPanel()
+	UI.bindActionButtons()
+	UI.bindTilesFill()
 })
 
 

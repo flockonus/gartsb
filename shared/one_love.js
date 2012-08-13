@@ -57,7 +57,8 @@ Map1.prototype.inspect = function(){
 G.Map1 = Map1
 
 // not happy about this function, since it would be better to index each hero to the map via some hero.id
-Map1.prototype.positionOfHero = function(hero){
+/* not used anymore
+Map1.prototype.heroWithPosition = function(hero){
 	for(var k in this.tiles){
 		if( this.tiles[k] == hero ){
 			var xy = k.split('_')
@@ -70,7 +71,7 @@ Map1.prototype.positionOfHero = function(hero){
 	}
 }
 G.Map1 = Map1
-
+*/
 
 
 function HP(max){
@@ -175,7 +176,7 @@ function Action(id, title, cost, description, selection, output){//animation
  * 
  * return: an array of blocks that are valid to be clicked
  */
-Action.prototype.validBlocks = function( map, team_id, fromPos ){
+Action.prototype.validBlocks = function( map, team_id, hero ){
 	var blocks = []
 	var posX, posY, what
 	var rangeW = this.selection.range.w
@@ -184,17 +185,17 @@ Action.prototype.validBlocks = function( map, team_id, fromPos ){
 	case 'square':
 		for (var x=(-1*rangeW); x <= rangeW; x++) {
 			for (var y=(-1*rangeW); y <= rangeW; y++) {
-				posX = fromPos.x+x
-				posY = fromPos.y+y
+				posX = hero.x+x
+				posY = hero.y+y
 				what = map.get(posX,posY)
 				//console.log('eval', posX, posY)
 				if( what == MAP.OFB ){
 					// next!
 				}else if( what == MAP.EMPTY && this.selection.target.include('empty') ){
-					//console.log(' >push')
+					// FIXME something wrong with this swap!
 					blocks.push({
-						x:posX,
-						y:posY,
+						x:posY,
+						y:posX,
 					})
 				}
 				else if( typeof what == 'object' && // a hero
@@ -291,11 +292,19 @@ Hero.prototype.inspect = function(){
 	console.log(this.type, 'hp: '+this.hp.current+'/'+this.hp.max)
 }
 
+Hero.prototype.setPos = function(x,y){
+	this.x = x
+	this.y = y
+}
+
+
 function SushiHero(team_id){
 	this.team_id = team_id
 	// simple, short, continous string
 	this.type = "sushi"
 	this.name = "Mad Sushi Man"
+	this.x = null
+	this.y = null
 	this.description = "After his wife and son got killed by sharks he sees fish in the face of anyone! So technically he is not trying to kill you, just doing his job."
 	this.hp = new HP(100)
 	//later this.def = 0.3
@@ -308,7 +317,7 @@ G.SushiHero = SushiHero
 // can be improved
 SushiHero.prototype.validate = Hero.prototype.validate
 SushiHero.prototype.inspect = Hero.prototype.inspect
-
+SushiHero.prototype.setPos = Hero.prototype.setPos
 
 MAX_AP = 6
 G.MAX_AP = MAX_AP
@@ -361,8 +370,10 @@ function GameManager(roomId, p1Id, p2Id){
 GameManager.prototype._setHeroesToMap = function(){
 	if( !this.map ) throw new Error('no map!')
 	var map = this.map
+	this.teams['left' ].heroes[0].setPos(0,1)
 	map.set( 0,	  1,    this.teams['left' ].heroes[0])
 	//map.set( 0,	  2,    this.teams['left' ].heroes[1])
+	this.teams['right'].heroes[0].setPos(map.w-1,2)
 	map.set( map.w-1,2, this.teams['right'].heroes[0])
 	//map.set( map.w-1,1, this.teams['right'].heroes[1])
 }

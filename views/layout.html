@@ -41,6 +41,20 @@
         <script type="text/javascript" charset="utf-8" src="/javascripts/player.js"></script>
         <script type="text/javascript" charset="utf-8" src="/javascripts/ui-control.js"></script>
         <script type="text/javascript" charset="utf-8" src="/javascripts/net.js"></script>
+        <script type="text/javascript">
+WebFontConfig = {
+  google: { families: [ 'Capriola::latin' ] }
+};
+(function() {
+  var wf = document.createElement('script');
+  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+    '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+  wf.type = 'text/javascript';
+  wf.async = 'true';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(wf, s);
+})();
+        </script>
     </body>
 </html>
 

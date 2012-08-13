@@ -4,6 +4,15 @@
 	var myId = null
 	var game = null
 	
+	socket.socket.requireAction = function(actionId,x,y){
+		//what a mess
+		this.namespaces[''].emit('do action', {
+			actionId:actionId,
+			x:x,
+			y:y,
+		})
+	}
+	
 	// React to a received message
 	socket.on('hello', function (data) {
 		console.log(":hello", data)

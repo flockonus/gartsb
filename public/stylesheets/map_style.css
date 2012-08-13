@@ -13,7 +13,7 @@ div{
 
 
  body{
-    font-family: "Arial, Helvetica, sans-serif,sans-serif";
+    font-family: 'Capriola', Arial, Helvetica, sans-serif;
     
 }
 
@@ -69,7 +69,15 @@ div{
             }
             
             .tile .active{
-                background-color: rgba(0,200,50,0.7);
+                background: rgba(0,200,50,0.7) !important;
+            }
+            
+            .tile .deny{
+                background: rgba(200,50,50,0.7) !important;
+            }
+
+            .tile .allowed{
+                background: rgba(0,50,200,0.7);
             }
 
             .hero{
@@ -84,44 +92,67 @@ div{
             
         #panel_wrap{
             position: fixed;
-            right: 0;
             top:0;
+            right: 0;
             width: 30%;
-            color: white;
             min-width: 350px;
-            overflow: hidden;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            color: white;
+            overflow: hidden;
+            background-color: rgba(255,255,255,0.5);
             z-index: 10;
         }
 
             .slect_hero {
                 position: absolute;
+                top: 60px;
                 width: 30px;
                 height: 200px;
-                top: 48px;
-                margin-left: 10%;
-                border: thin solid black;
+                text-indent: 1500px;
+                margin: 0% 
+                        0% 
+                        0% 
+                        10%;
+                background: url(left_arrow.png) 
+                            no-repeat;
             }
 
             .positioning {
                 position: absolute;
-                margin-left: 81%;
+                margin: 0% 
+                        0% 
+                        0% 
+                        81%;
+                background: url(right_arrow.png) 
+                            no-repeat;
             }
 
             #hero_avatar{
                 width: 200px;
                 height: 200px;
                 margin: auto;
-                border: thin solid;
+                background: rgba(0,0,0,0.5);
             }
 
             #panel_wrap h2{
                 text-align: center;
-                margin-top: 20px;
-                margin-bottom: 0px;
-
+                margin: 10px 
+                        0px 
+                        10px 
+                        0px;
+                padding: 20px 
+                        0px 
+                        0px 
+                        0px;
+                background: url(shadowBG.png) 
+                            no-repeat 
+                            center;
+                background-size: contain;
             }
+
+                #panel_wrap h2:first-of-type {
+                    margin-top: 0px;
+                }
 
             .attack_button{
                 width: 90%;
@@ -129,6 +160,8 @@ div{
                 height: 30px;
                 margin: auto;
                 margin-bottom: 5px;
+                font-size: 1.5em;
+                color: black;    
                 border: 1px solid #3a84c3;
                 background: linear-gradient(to bottom, #b7deed 0%,#71ceef 50%,#21b4e2 51%,#b7deed 100%); /* W3C */
                 background: #b7deed; /* Old browsers */
@@ -143,17 +176,27 @@ div{
                 border-radius: 10px; 
                 -moz-border-radius: 10px; 
                 -webkit-border-radius: 10px; 
+
+                /* Animation */
+                -webkit-transition: all 0.5s cubic-bezier(0,-0.6,1,1.46);
+                -moz-transition: all 0.5s cubic-bezier(0,-0.6,1,1.46);
             }
 
 
                 .attack_button span:first-child{
                     float: left;
-                    margin: 0% 0% 0 10%;
+                    margin: 0% 
+                            0% 
+                            0% 
+                            10%;
                 }
 
                 .attack_button span:last-child{
                     float: right;
-                    margin: 0% 10% 0 10%;
+                    margin: 0% 
+                            10% 
+                            0% 
+                            10%;
                 }
 
                 .attack_button:hover{
@@ -168,7 +211,7 @@ div{
                     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffb76b', endColorstr='#ff7f04',GradientType=0 ); /* IE6-9 */
                 }
 
-                .attack_button:active{
+                .attack_button:active, .attack_button.active{
                     color: orange;
                         background: #fefcea; /* Old browsers */
                         background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
@@ -192,16 +235,18 @@ div{
                     float: left;
                     width: 16%;
                     height: 50%;
-                    margin: 0px 0px 0px 2px;
-                        background: #9dd53a; /* Old browsers */
-                        background: -moz-linear-gradient(top,  #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* FF3.6+ */
-                        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9dd53a), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
-                        background: -webkit-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Chrome10+,Safari5.1+ */
-                        background: -o-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Opera 11.10+ */
-                        background: -ms-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* IE10+ */
-                        background: linear-gradient(to bottom,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
-                        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9dd53a', endColorstr='#7cbc0a',GradientType=0 ); /* IE6-9 */
-                        border: thin solid #1d8800;
+                    margin: 0px 
+                            0px 
+                            0px 
+                            2px;
+                    background: #9dd53a; /* Old browsers */
+                    background: -moz-linear-gradient(top,  #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* FF3.6+ */                        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9dd53a), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
+                    background: -webkit-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Chrome10+,Safari5.1+ */
+                    background: -o-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Opera 11.10+ */
+                    background: -ms-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* IE10+ */
+                    background: linear-gradient(to bottom,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
+                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9dd53a', endColorstr='#7cbc0a',GradientType=0 ); /* IE6-9 */
+                    border: thin solid #1d8800;
 
                 }
 
