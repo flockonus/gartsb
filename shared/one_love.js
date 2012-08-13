@@ -1,4 +1,7 @@
 (function(){
+
+var IS_SERVER = (typeof window == 'undefined' ? true : false )
+
 var G = {}
 if(!console.group)    console.group = console.log
 if(!console.groupEnd) console.groupEnd = console.log
@@ -192,10 +195,9 @@ Action.prototype.validBlocks = function( map, team_id, hero ){
 				if( what == MAP.OFB ){
 					// next!
 				}else if( what == MAP.EMPTY && this.selection.target.include('empty') ){
-					// FIXME something wrong with this swap!
 					blocks.push({
-						x:posY,
-						y:posX,
+						x:posX,
+						y:posY,
 					})
 				}
 				else if( typeof what == 'object' && // a hero
@@ -323,13 +325,12 @@ MAX_AP = 6
 G.MAX_AP = MAX_AP
 /**
  * player_id = socket.id
- * side: 0 / 1  => left / right
  */
-function Team(id, playerId, side){
+function Team(id, playerId){
 	this.id = id
 	this.playerId = playerId
-	this.side = side
-	this.ap = side
+	//this.side = side
+	this.ap = MAX_AP
 	// at this point have both sides come with same heroes
 	this.heroes = [
 		new SushiHero(this.id),
@@ -361,8 +362,8 @@ function GameManager(roomId, p1Id, p2Id){
 	this.whoseTurn = 'left'
 	//this.turnTimeLeft = TURN_BASE
 	this.map = new Map1()
-	this.teams['left'] = new Team('left', p1Id, 0 )
-	this.teams['right'] = new Team('right', p2Id, 0 )
+	this.teams['left'] = new Team('left', p1Id )
+	this.teams['right'] = new Team('right', p2Id )
 	this._setHeroesToMap()
 	this.roomId = roomId
 }
@@ -385,6 +386,25 @@ GameManager.prototype.start = function(turnCb, playActionCb){
 	this.turnCb = turnCb
 	this.playActionCb = playActionCb
 }
+
+GameManager.prototype.getTeamByUserId = function(userId){
+	for(var tId in this.teams)
+			if(this.teams[tId].playerId == userId)
+				return this.teams[tId]
+}
+
+GameManager.prototype.executeAction = function(playerId, actionId, x, y){
+	var action = ActionManager.get(actionId)
+	var team = this.getTeamByUserId( playerId )
+	console.log(JSON.stringify(this))
+	// TODO IS_SERVER, verify team with this.whoseTurn
+	if( team.ap < action.cost )
+		return false
+	team.ap = team.ap - action.cost
+	// TODO APPLY MOVEMENTS!!!
+	return true
+}
+
 
 GameManager.prototype.nextTurn = function(){
 	this.whoseTurn = (this.whoseTurn == 'left' ? 'right' : 'left')
@@ -409,12 +429,10 @@ GameManager.prototype.inspect = function(){
 
 G.GameManager = GameManager
 
-if (typeof module != 'undefined' ) {
+if ( IS_SERVER ) {
 	module.exports = G
-};
-
-if (typeof window != 'undefined' ) {
+} else {
 	window.G = G
-};
+}
 
 })()

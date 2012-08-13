@@ -6,8 +6,8 @@ var Player = {
 		this.game = game
 		this.myId = id
 		for(var tId in game.teams)
-		if(game.teams[tId].playerId == this.myId)
-			this.teamId = tId
+			if(game.teams[tId].playerId == this.myId)
+				this.teamId = tId
 		this.heroes = this.game.teams[this.teamId].heroes
 		//console.log(tId,game.teams[tId].playerId)
 		this.activeHero = null

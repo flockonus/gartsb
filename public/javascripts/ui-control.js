@@ -13,8 +13,8 @@ UI = {
 		var tileLength = g.map.w * g.map.h
 		var x,y
 		jtiles.each(function(i,e){
-			y = i%(g.map.w)
-			x = Math.floor(i/(g.map.h+1))
+			x = i%(g.map.w)
+			y = Math.floor(i/(g.map.h+1))
 			e.id = x+"_"+y
 		})
 	},

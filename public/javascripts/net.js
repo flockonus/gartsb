@@ -39,6 +39,11 @@
 		game.start( Player.turnCb(), UI.actionCb )
 	})
 	
+	socket.on('play action', function(data){
+		
+	})
+	
+	// TODO
 	socket.on('game nextTurn', function(data){
 		game.nextTurn()
 	})
