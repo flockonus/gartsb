@@ -1,6 +1,6 @@
 {
   "name": "gartsb",
-  "version": "0.0.3",
+  "version": "0.0.3-1",
   "private": true,
   "scripts": {
     "start": "node ./app.js"
