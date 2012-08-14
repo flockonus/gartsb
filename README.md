@@ -1,14 +1,15 @@
-GARTSB - Scalable HTML5 game  architecture 
-============
+# GARTSB - Scalable HTML5 game architecture 
 
-Key Features and Characteristics
----
+A mmo architecture for turn based games such as card, board, strategy, trivia, puzzle and more!  
+Allows for multiple players to play in a room.  
 
-- Have game logic code shared between client and server
-- Support a huge number of small game rooms
-- Support turn-based game
-- Use Socket.io for leverage clients while keeping fast
-- Use Redis for pub/sub and game data storage
+## Key Features and Choices
+
+* Node.js for low memory footprint and game logic code shared between client and server
+* Support a huge number of small game rooms
+* Support turn-based game
+* Use Socket.io for leverage clients while keeping communications fast
+* Use Redis for pub/sub and game data storage
 
 ![overview schema](https://raw.github.com/flockonus/gartsb/master/docs/overview_schema.png)
 
@@ -20,11 +21,45 @@ Socket.io is used to reliably connect a wide variety of clients in a consistent 
 
 ![comm flow](https://raw.github.com/flockonus/gartsb/master/docs/comm_flow.png)
 
-As known, Node.js processes don't share state, it allows then to keep fast, but there should be a way for each instance reply to client requests  
+Node.js processes don't share state but there should be a way for each instance reply to client requests  
 In the proposed architecture, all the data is stored in a Redis (in-memory data)  
 
-For every action the user takes it is atutomatically transmitted to the server (action Do) 
+Some perspective on main events follows  
 
-the user takes is processed the room state is saved
+#### sends UID
+Each user must bear a key that survives page reload, disconnection, browser close. This may be replaced by authentication.
+ * once the server recognize the user key it gets put to a match queue, (which may be speciallized or common)
+ * gets replied with **tells on queue** or directly with **match!**
+
+#### match!
+Let the client know that it has been assigned to a room and to which team it belongs.
+ * the interface switch to a game mode
+ * map, scenario, gui gets innitialized
+
+#### turn 
+The server is responsible to keep track and inform clients whose turn is it
+ * the client must make adjustments to gui and map to reflect turn state, it may be of Player's or opponents.
+
+#### action do
+During his turn the user may send actions, they get validated first at client and then at server.
+ * room state gets restored
+ * action gets processed
+ * room state is persisted again
+ * outcome gets transmited (**action play**)
+
+#### action Play
+Clients get the information required to make the game state coherent between all peers.
+ * actions outcome gets displayed
+
+#### chat send
+Assuming that users may send chat messages at any point and they get replicated within the room
+ * no need to restore room state, message gets broadcast **chat broadcast**
+
+#### chat broadcast
+The chat message get displayed to all players
+
+#### game end
+The game may end at clients extended disconnection or the natural course, somebody win
+ * the game result gets displayed to all peers
 
 
