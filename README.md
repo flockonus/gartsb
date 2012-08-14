@@ -10,4 +10,4 @@ Key Features and Characteristics
 - Use Socket.io for leverage clients while keeping fast
 - Use Redis for pub/sub and game data storage
 
-![overview schema](https://raw.github.com/flockonus/gartsb/master/public/docs/overview_schema.png)
+![overview schema](https://raw.github.com/flockonus/gartsb/master/docs/overview_schema.png)
