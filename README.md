@@ -14,7 +14,7 @@ Allows for multiple players to play in a room.
 ![overview schema](https://raw.github.com/flockonus/gartsb/master/docs/overview_schema.png)
 
 This proposed architecture target the making of a turn based game, played by 2 or more players in closed room.  
-Redis was choosen due it's low lattency, concurrency level, great concurrency support, ability to expire key, large range of data structure and and ability for pub/sub channels.  
+Redis was chosen due it's low latency, concurrency level, great concurrency support, ability to expire key, large range of data structure and and ability for pub/sub channels.  
 A reverse proxy (Nginx/HAproxy) that can handle websockets and long connections is used to unify multiple servers, while each of these should spawn one server instance for each cpu, via the native cluster module.  
 Socket.io is used to reliably connect a wide variety of clients in a consistent way while leveraging transport technologies  
 
@@ -28,24 +28,24 @@ Some perspective on main events follows
 
 #### sends UID
 Each user must bear a key that survives page reload, disconnection, browser close. This may be replaced by authentication.
- * once the server recognize the user key it gets put to a match queue, (which may be speciallized or common)
+ * once the server recognize the user key it gets put to a match queue, (which may be specialized or common)
  * gets replied with **tells on queue** or directly with **match!**
 
 #### match!
 Let the client know that it has been assigned to a room and to which team it belongs.
  * the interface switch to a game mode
- * map, scenario, gui gets innitialized
+ * map, scenario, GUI gets initialized
 
 #### turn 
 The server is responsible to keep track and inform clients whose turn is it
- * the client must make adjustments to gui and map to reflect turn state, it may be of Player's or opponents.
+ * the client must make adjustments to GUI and map to reflect turn state, it may be of Player's or opponents.
 
 #### action do
 During his turn the user may send actions, they get validated first at client and then at server.
  * room state gets restored
  * action gets processed
  * room state is persisted again
- * outcome gets transmited (**action play**)
+ * outcome gets transmitted (**action play**)
 
 #### action Play
 Clients get the information required to make the game state coherent between all peers.
@@ -63,3 +63,9 @@ The game may end at clients extended disconnection or the natural course, somebo
  * the game result gets displayed to all peers
 
 
+
+
+
+-- 
+Fabiano Pereira Soriani
+http://flockonus.github.com
