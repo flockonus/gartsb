@@ -1,15 +1,17 @@
-# GARTSB - Scalable HTML5 game architecture 
+# GARTSB - HTML5 game architecture 
 
-A mmo architecture for turn based games such as card, board, strategy, trivia, puzzle and more!  
-Allows for multiple players to play in a room.  
+A mmo architecture for turn based games such as board, cards, strategy, social, trivia, puzzle and more!  
+Allows for multiple players to play in a room.
 
 ## Key Features and Choices
 
-* Node.js for low memory footprint and game logic code shared between client and server
-* Support a huge number of small game rooms
-* Support turn-based game
-* Use Socket.io for leverage clients while keeping communications fast
-* Use Redis for pub/sub and game data storage
+ * Support a huge number of small game rooms
+ * Scalable both vertically and horizontally
+ * Fault tollerant as game servers may respawn
+ * Support turn-based game system
+ * Node.js for low memory footprint and game logic code shared between client and server
+ * Use Socket.io for leverage clients while keeping communications fast
+ * Use Redis for pub/sub and game data storage
 
 ![overview schema](https://raw.github.com/flockonus/gartsb/master/docs/overview_schema.png)
 
