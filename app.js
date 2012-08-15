@@ -8,7 +8,6 @@ var express = require('express')
   , path = require('path')
   , swig = require('./config/consolidate-swig').swig
   , redis = require('redis')
-  , manager = require('./shared/one_love.js')
   , C 
 
 

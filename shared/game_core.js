@@ -13,6 +13,13 @@ MAP = {
 }
 G.MAP = MAP
 
+MAX_AP = 6
+G.MAX_AP = MAX_AP
+
+
+TURN_BASE = 13
+G.TURN_BASE = TURN_BASE
+
 function Map1(){
 	this.w = 5 //x
 	this.h = 4 //y
@@ -138,7 +145,7 @@ Damage.prototype.roll = function(){
 	var output = this.base+((1+Math.random())*this.interval)
 	var critTrigged = false
 	if( Math.random() < this.critRatio ){
-		output += this.base*0.6
+		output += this.base*0.8
 		critTrigged = true
 	}
 	return {
@@ -255,7 +262,7 @@ ActionManager.register(new Action(
 		new Target(['enemy'])
 	),
 	new Output([
-		['damage', 'circle', 0, 'toPos', new Damage(5,2,0.15)]
+		['damage', 'square', 0, 'toPos', new Damage(15,8,0.15)]
 	])
 ))
 
@@ -295,8 +302,18 @@ Hero.prototype.inspect = function(){
 }
 
 Hero.prototype.setPos = function(x,y){
-	this.x = x
-	this.y = y
+	this.x = parseInt(x,10)
+	this.y = parseInt(y,10)
+}
+
+Hero.prototype.applyHPVariation = function(x){
+	if( this.hp.current + x <= 0 ){
+		this.hp.current = 0
+		this.state = 'dead'
+		return false
+	}
+	this.hp.current += x
+	return true
 }
 
 
@@ -304,6 +321,7 @@ function SushiHero(team_id){
 	this.team_id = team_id
 	// simple, short, continous string
 	this.type = "sushi"
+	this.state = "alive"
 	this.name = "Mad Sushi Man"
 	this.x = null
 	this.y = null
@@ -320,9 +338,9 @@ G.SushiHero = SushiHero
 SushiHero.prototype.validate = Hero.prototype.validate
 SushiHero.prototype.inspect = Hero.prototype.inspect
 SushiHero.prototype.setPos = Hero.prototype.setPos
+SushiHero.prototype.applyHPVariation = Hero.prototype.applyHPVariation
 
-MAX_AP = 6
-G.MAX_AP = MAX_AP
+
 /**
  * player_id = socket.id
  */
@@ -347,8 +365,6 @@ Team.prototype.inspect = function(){
 }
 G.Team = Team
 
-TURN_BASE = 20
-G.TURN_BASE = TURN_BASE
 /**
  * 2 players, turn based, game mananger
  * 
@@ -393,23 +409,109 @@ GameManager.prototype.getTeamByUserId = function(userId){
 				return this.teams[tId]
 }
 
-GameManager.prototype.executeAction = function(playerId, actionId, x, y){
-	var action = ActionManager.get(actionId)
+// perform  verification of actions, make then happen
+GameManager.prototype.executeAction = function(playerId, actionId, toX, toY, fromX, fromY){
+	var action = G.ActionManager.get(actionId)//.output.outcome
 	var team = this.getTeamByUserId( playerId )
-	console.log(JSON.stringify(this))
+	//console.log(JSON.stringify(this))
 	// TODO IS_SERVER, verify team with this.whoseTurn
 	if( team.ap < action.cost )
 		return false
-	team.ap = team.ap - action.cost
-	// TODO APPLY MOVEMENTS!!!
-	return true
+	// not now| team.ap = team.ap - action.cost
+	
+	// calculate movements!
+	var response = this.calculateAction(action, toX, toY, fromX, fromY)
+	
+	response.ap = team.ap - action.cost
+	return response
+}
+
+// makes the calculation of actions, return a list of what happend
+GameManager.prototype.calculateAction = function(action, toX, toY, fromX, fromY) {
+	var out = []
+	var effect
+	//console.log(action)
+	for (var i=0; i < action.output.outcome.length; i++) {
+		effect = action.output.outcome[i]
+		if( effect[0] == 'move' ){
+			if( effect[1] == 'endPos' )
+				out.push(['move', fromX, fromY, toX, toY])
+		}
+		if( effect[0] == 'damage' ){
+			// TODO complete the case, test range & shape
+			var dmg = effect[4].roll() // raw, critical
+			out.push(['damage', fromX, fromY, [dmg, toX, toY] ])
+		}
+	};
+	return {sequence:out}
+};
+
+// blindly apply list of actions
+GameManager.prototype.applyActionOutcome = function(sequence, ap){
+	if( sequence ){
+		for (var i=0; i < sequence.length; i++) {
+			//debugger
+			switch( sequence[i][0] ){
+			case 'move':
+				var hero = this.map.get(sequence[i][1],sequence[i][2])
+				this.map.set(sequence[i][3],sequence[i][4], hero)
+				this.map.set(sequence[i][1],sequence[i][2], MAP.EMPTY)
+				hero.setPos(sequence[i][3], sequence[i][4])
+				// FIXME bad design
+				if(!IS_SERVER)
+					$.gritter.add({
+						title: "Move",
+						text: hero.name+" made a MOVE",
+						time: 1000,
+					})
+				break
+			case 'damage':
+				// may be multiple targets
+				//for (var j=0; j < sequence[i][3].length; j++) {
+				//};
+				var hero = this.map.get(sequence[i][3][1],sequence[i][3][2])
+				hero.applyHPVariation( -1*sequence[i][3][0].raw )
+				// FIXME bad design
+				if(!IS_SERVER)
+					$.gritter.add({
+						title: "Atk",
+						time: 1000,
+						text: sequence[i][3][0].raw+" of damage! "+
+						      (sequence[i][3][0].critical ? '(CRITICAL)' : ''),
+					})
+				break
+			};
+			this.teams[this.whoseTurn].ap = ap
+		}
+	}
 }
 
 
 GameManager.prototype.nextTurn = function(){
 	this.whoseTurn = (this.whoseTurn == 'left' ? 'right' : 'left')
 	this.turn += 1
-	this.turnCb(this.whoseTurn, this.turn)
+	console.log("nextTurn", this.turn, this.whoseTurn, "ap was", this.teams[this.whoseTurn].ap )
+	this.teams[this.whoseTurn].ap += (MAX_AP/2)+1
+	if( this.teams[this.whoseTurn].ap > MAX_AP )
+		this.teams[this.whoseTurn].ap = MAX_AP
+	if( typeof this.turnCb == 'function' )
+		this.turnCb(this.whoseTurn, this.turn)
+}
+
+GameManager.prototype.checkGameOver = function(){
+	for(var teamId in this.teams){
+		var team = this.teams[teamId]
+		var anyAlive = false
+		for (var j=0; j < team.heroes.length; j++) {
+			var hero = team.heroes[j]
+			console.log('alive?', team.id, hero.hp.current )
+			if( hero.hp.current > 0 )
+				anyAlive = true
+		};
+		if( !anyAlive )
+			return team.id == 'left'? 'right' : 'left'
+	};
+	return false
 }
 
 

@@ -36,25 +36,21 @@
             </div>
         </div>
         <script type="text/javascript" charset="utf-8" src="/javascripts/jquery.min.1.7.2.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/javascripts/jquery.gritter.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="/socket.io/socket.io.js"></script>
-        <script type="text/javascript" charset="utf-8" src="/one_love.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/game_core.js"></script>
         <script type="text/javascript" charset="utf-8" src="/javascripts/player.js"></script>
         <script type="text/javascript" charset="utf-8" src="/javascripts/ui-control.js"></script>
         <script type="text/javascript" charset="utf-8" src="/javascripts/net.js"></script>
-        <script type="text/javascript">
-WebFontConfig = {
-  google: { families: [ 'Capriola::latin' ] }
-};
-(function() {
-  var wf = document.createElement('script');
-  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-    '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-  wf.type = 'text/javascript';
-  wf.async = 'true';
-  var s = document.getElementsByTagName('script')[0];
-  s.parentNode.insertBefore(wf, s);
-})();
-        </script>
+        <link href='/stylesheets/jquery.gritter.css' rel='stylesheet' type='text/css' />
+        <link href='http://fonts.googleapis.com/css?family=Capriola' rel='stylesheet' type='text/css' />
+        <style type="text/css" media="screen">
+            /* XXX ugly debug mode */
+           /*#panel_wrap{
+               -webkit-transform: translateY(-70px) scale(0.7);
+               overflow: visible !important;
+           }*/
+        </style>
     </body>
 </html>
 

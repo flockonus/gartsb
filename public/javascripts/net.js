@@ -8,8 +8,10 @@
 		//what a mess
 		this.namespaces[''].emit('do action', {
 			actionId:actionId,
-			x:x,
-			y:y,
+			toX:x,
+			toY:y,
+			fromX: Player.activeHero.x,
+			fromY: Player.activeHero.y,
 		})
 	}
 	
@@ -40,18 +42,36 @@
 	})
 	
 	socket.on('play action', function(data){
+		game.applyActionOutcome(data.sequence, data.ap)
+		UI.setGauge(data.ap)
+		// TODO this better by applying outcomes individually
+		//      instead of refreshing the whole map and gui
+		UI.refreshMap()
 		
+		if( game.whoseTurn == Player.teamId )
+			UI.selectHero( Player.activeHero )
 	})
 	
-	// TODO
-	socket.on('game nextTurn', function(data){
+	socket.on('next turn', function(data){
 		game.nextTurn()
+		$.gritter.add({
+			title: "Turn "+game.turn,
+			text: game.whoseTurn,
+			time: 1000,
+		})
+		//Player.turnCb()(game.whoseTurn,game.turn)
 	})
 	
 	socket.on('game end', function(data){
 		console.log(":game end", data)
 		if( data.result == 'quitter' ){
 			UI.gameOver("Your partner quit, you win!")
+		}
+		if( data.result == 'right' || data.result == 'left' ){
+			if( Player.teamId == data.result )
+				UI.gameOver("Congratulations, you won!")
+			else
+				UI.gameOver("Defeat")
 		}
 	})
 //});

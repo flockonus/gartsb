@@ -18,8 +18,12 @@ var Player = {
 			UI.refreshMap()
 			setTimeout(function() {
 				if(whose == ctx.teamId) {
+					// FIXME bad way to do this
+					if( !$('#hero_avatar').length ){
+						UI.showGUI()
+					}
 					console.log('my turn!', n, whose)
-					UI.setGauge(G.MAX_AP)
+					UI.setGauge(ctx.game.teams[ctx.teamId].ap)
 					// do some graphical stuff
 					// enable controls
 
@@ -30,7 +34,7 @@ var Player = {
 					// do some graphical stuff
 					// disable controls
 				}
-
+				UI.startTurnCounter()
 			}, (n == 0 ? UI.beginDelay + 100 : 1))
 		}
 	},
@@ -47,18 +51,14 @@ var Player = {
 	selectAction : function(actBtn) {
 		var actionId = actBtn.data('actionId')
 		var action = G.ActionManager.get( actionId )
-		var openPos = action.validBlocks(game.map, this.id, this.activeHero )
-		// ui
+		var openPos = action.validBlocks(game.map, this.teamId, this.activeHero )
 		console.log('available Pos', openPos)
-		var joverlays = $('#map .full').removeClass('a')
-		for (var i=0; i < openPos.length; i++) {
-			$('#'+openPos[i].x+'_'+openPos[i].y+' div').addClass('allowed')
-		};
+		UI.displayAllowedPositions(openPos)
 	},
 	doActionAt: function(x,y){
 		var actionId = $('#panel_wrap .attack_button.active').data('actionId')
-		var action = G.ActionManager.get( actionId )
-		// should it be verified yet another before sending?
-		socket.socket.requireAction(actionId,x,y)
+		//var action = G.ActionManager.get( actionId )
+		// should it be verified yet again before sending?
+		socket.socket.requireAction(actionId,parseInt(x,10),parseInt(y,10))
 	},
 }

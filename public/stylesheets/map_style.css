@@ -178,8 +178,8 @@ div{
                 -webkit-border-radius: 10px; 
 
                 /* Animation */
-                -webkit-transition: all 0.5s cubic-bezier(0,-0.6,1,1.46);
-                -moz-transition: all 0.5s cubic-bezier(0,-0.6,1,1.46);
+                -webkit-transition: all 0.05s cubic-bezier(0,-0.6,1,1.46);
+                -moz-transition: all 0.05s cubic-bezier(0,-0.6,1,1.46);
             }
 
 
@@ -200,7 +200,9 @@ div{
                 }
 
                 .attack_button:hover{
-                    border: #ED7600;
+                    border: thin 
+                            solid 
+                            #ED7600;
                     background: #ffb76b; /* Old browsers */
                     background: -moz-linear-gradient(top, #ffb76b 0%, #ffa73d 50%, #ff7c00 51%, #ff7f04 100%); /* FF3.6+ */
                     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffb76b), color-stop(50%,#ffa73d), color-stop(51%,#ff7c00), color-stop(100%,#ff7f04)); /* Chrome,Safari4+ */
@@ -212,6 +214,9 @@ div{
                 }
 
                 .attack_button:active, .attack_button.active{
+                    border: thin 
+                            solid 
+                            yellow;
                     color: orange;
                         background: #fefcea; /* Old browsers */
                         background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
@@ -275,6 +280,14 @@ div{
 
                     border: thin solid #666;
 
+                }
+                #turn_count{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    padding: 8px 12px;
+                    background: rgba(0, 0, 0, 0.5);
+                    border-radius: 0px 10px 10px 10px;
                 }
             
             /* UTILS */
