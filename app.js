@@ -65,13 +65,13 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 var pub, sub, R;
 
 if ('production' == app.get('env')) {
-	pub    = require('redis-url').connect(process.env.REDISTOGO_URL)//redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
-	//pub.auth(process.env.REDIS_PASS )
-  sub    = require('redis-url').connect(process.env.REDISTOGO_URL)//redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
-  //sub.auth(process.env.REDIS_PASS )
-  R      = require('redis-url').connect(process.env.REDISTOGO_URL)//redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
-  //R.auth(  process.env.REDIS_PASS )
-  //console.log('pass', process.env.REDIS_PASS)
+	pub    = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
+	pub.auth(process.env.REDIS_PASS )
+  sub    = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
+  sub.auth(process.env.REDIS_PASS )
+  R      = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
+  R.auth(  process.env.REDIS_PASS )
+  console.log('pass', process.env.REDIS_PASS)
 } else {
 	pub    = redis.createClient()
   sub    = redis.createClient()
