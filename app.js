@@ -81,6 +81,10 @@ if ('production' == app.get('env')) {
 var io = require('./lib/sockets.js')(server, pub, sub, R, C )
 //var gm = require('./lib/gm.js')
 
+if( 'production' == app.get('env') ){
+	io.set("transports", ["xhr-polling"]); 
+	io.set("polling duration", 10); 
+}
 
 // FIXME only for redirect
 // init redis

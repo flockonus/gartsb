@@ -8,9 +8,8 @@
   "dependencies": {
     "express": "3.0",
     "swig": "0.12.0",
-    "socket.io": "0.9.9",
-    "redis": "0.7.2",
-    "redis-url": "0.1.0"
+    "redis-url": "0.1.0",
+    "socket.io": "0.9.9"
   },
   "subdomain": "fabianops-gartsb",
   "engines": {
