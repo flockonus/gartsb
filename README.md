@@ -3,6 +3,11 @@
 A mmo architecture for turn based games such as board, cards, strategy, social, trivia, puzzle and more!  
 Allows for multiple players to play in a room.
 
+## Demonstration
+Open 2 windows from this link: [DEMO](http://fabianops-gartsb.jit.su/)  
+Each window represent a player. When both windows are open, they are automatically connected!  
+*this demo does not reflect the full state of the proposed architecture*
+
 ## Key Features and Choices
 
  * Support a huge number of small game rooms
