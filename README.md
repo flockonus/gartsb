@@ -17,8 +17,8 @@ Allows for multiple players to play in a room.
 
 This proposed architecture target the making of a turn based game, played by 2 or more players in closed room.  
 Redis was chosen due it's low latency, concurrency level, great concurrency support, ability to expire key, large range of data structure and and ability for pub/sub channels.  
-A reverse proxy (Nginx/HAproxy) that can handle websockets and long connections is used to unify multiple servers, while each of these should spawn one server instance for each cpu, via the native cluster module.  
-Socket.io is used to reliably connect a wide variety of clients in a consistent way while leveraging transport technologies  
+A reverse proxy (Nginx/HAproxy) that can handle websockets and long connections can be used for horizontal scalability. While each of the Servers get it's capacity fully used by spawning one server instance per cpu via the native cluster module.  
+Socket.io is used to reliably connect a wide variety of clients in a consistent way while leveraging the fastest transport technologies  
 
 
 ![comm flow](https://raw.github.com/flockonus/gartsb/master/docs/comm_flow.png)
