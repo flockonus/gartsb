@@ -71,7 +71,7 @@ if ('production' == app.get('env')) {
   //sub.auth(process.env.REDIS_PASS )
   R      = require('redis-url').connect(process.env.REDISTOGO_URL)//redis.createClient(process.env.REDIS_PORT, process.env.REDIS_URL)
   //R.auth(  process.env.REDIS_PASS )
-  console.log('pass', process.env.REDIS_PASS)
+  //console.log('pass', process.env.REDIS_PASS)
 } else {
 	pub    = redis.createClient()
   sub    = redis.createClient()
@@ -81,10 +81,6 @@ if ('production' == app.get('env')) {
 var io = require('./lib/sockets.js')(server, pub, sub, R, C )
 //var gm = require('./lib/gm.js')
 
-if( 'production' == app.get('env') ){
-	io.set("transports", ["xhr-polling"]); 
-	io.set("polling duration", 10); 
-}
 
 // FIXME only for redirect
 // init redis
