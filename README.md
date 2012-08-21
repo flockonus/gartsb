@@ -6,7 +6,7 @@ Allows for multiple players to play in a room.
 ## Demonstration
 Open 2 windows from this link: [DEMO](http://fabianops-gartsb.jit.su/)  
 Each window represent a player. When both windows are open, they are automatically connected!  
-*this demo does not reflect the full state of the proposed architecture*
+*as it has less than 40 hours of development this demo does not reflect the full state of the proposed architecture, it lives as a conceptual proof and is work in progress*
 
 ## Key Features and Choices
 
